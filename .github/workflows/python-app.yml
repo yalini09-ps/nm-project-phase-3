@@ -1,0 +1,58 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load sample dataset (Pima Indians Diabetes Dataset)
+def load_data():
+    url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+    columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+               'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome']
+    data = pd.read_csv(url, names=columns)
+    return data
+
+# Train the disease prediction model
+def train_model(data):
+    X = data.drop('Outcome', axis=1)
+    y = data['Outcome']
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+
+    predictions = model.predict(X_test)
+    
+    print("Model Accuracy:", accuracy_score(y_test, predictions))
+    print("\nClassification Report:\n", classification_report(y_test, predictions))
+    
+    return model
+
+# Predict disease outcome for a new patient
+def predict_new_patient(model, patient_data):
+    patient_df = pd.DataFrame([patient_data])
+    prediction = model.predict(patient_df)
+    result = "Likely Diabetic" if prediction[0] == 1 else "Not Diabetic"
+    print(f"Prediction for new patient: {result}")
+
+# Main execution
+if __name__ == "__main__":
+    data = load_data()
+    model = train_model(data)
+
+    # Example patient data: Change values to test
+    example_patient = {
+        'Pregnancies': 2,
+        'Glucose': 120,
+        'BloodPressure': 70,
+        'SkinThickness': 20,
+        'Insulin': 85,
+        'BMI': 28.0,
+        'DiabetesPedigreeFunction': 0.5,
+        'Age': 33
+    }
+
+    predic_new_patient(model, example_patient)￼Enter
